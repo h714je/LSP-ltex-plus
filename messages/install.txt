@@ -1,0 +1,23 @@
+LSP-ltex-plus
+-------------------------------
+
+Latex/Markdown grammer check support for Sublime's LSP plugin provided through 
+https://github.com/ltex-plus/ltex-ls-plus.
+
+# Installation
+
+- Make sure [LSP](https://packagecontrol.io/packages/LSP) is installed.
+- Download ltex-ls-plus usage from https://github.com/ltex-plus/ltex-ls-plus/releases
+- Configure the "command" setting in LSP-ltex-plus settings to point to the ltex-ls-plus executable (bin/ltex-ls-plus or bin/ltex-ls-plus.bat).
+- Ensure `JAVA_HOME` is set if using a version without bundled Java.
+
+
+# Language
+
+- Set the language string in the server settings
+- Use magic comments in code, see https://ltex-plus.github.io/ltex-plus/advanced-usage.html#magic-comments
+
+
+More information: 
+https://github.com/LDAP/LSP-ltex-plus
+https://github.com/ltex-plus/ltex-ls-plus
