@@ -1,8 +1,11 @@
-Перенесено в https://github.com/sublimelsp/LSP-ltex-plus
+
 
 # LSP-ltex-plus
 
 Поддержка проверки грамматики LaTeX/Markdown для плагина LSP в Sublime Text, обеспечиваемая через [ltex-plus/ltex-ls-plus](https://github.com/ltex-plus/ltex-ls-plus).
+
+Этот плагин является форком [LSP-ltex-ls](https://github.com/sublimelsp/LSP-ltex-ls), адаптированным для LTeX Plus.
+
 
 ## Установка
 
@@ -44,7 +47,7 @@
 
 Этот плагин поддерживает хранение словарей, скрытых ложных срабатываний и отключенных правил во внешних файлах. Это полезно для совместного использования конфигураций или поддержания чистоты файла настроек.
 
-Чтобы включить эту функцию, добавьте следующее в ваш `LSP-ltex-ls-dev.sublime-settings`:
+Чтобы включить эту функцию, добавьте следующее в ваш `LSP-ltex-plus.sublime-settings`:
 
 ```json
 {
@@ -57,9 +60,9 @@
 Когда включено, действия с кодом (Добавить в словарь, Скрыть ложное срабатывание, Отключить правило) будут записывать данные в файлы в директории вашего пакета User вместо обновления файла настроек напрямую.
 
 **Расположение по умолчанию:**
-*   Словари: `.../Packages/User/LSP-ltex-ls-dev/dictionaries/{lang}.txt`
-*   Скрытые ложные срабатывания: `.../Packages/User/LSP-ltex-ls-dev/hidden_false_positives/hiddenFalsePositives.{lang}.txt`
-*   Отключенные правила: `.../Packages/User/LSP-ltex-ls-dev/disabled_rules/disabledRules.{lang}.txt`
+*   Словари: `.../Packages/User/LSP-ltex-plus/dictionaries/{lang}.txt`
+*   Скрытые ложные срабатывания: `.../Packages/User/LSP-ltex-plus/hidden_false_positives/hiddenFalsePositives.{lang}.txt`
+*   Отключенные правила: `.../Packages/User/LSP-ltex-plus/disabled_rules/disabledRules.{lang}.txt`
 
 **Пользовательское расположение:**
 Вы можете настроить директории, задав параметры:
@@ -74,3 +77,8 @@
   "external_dictionary_dir": "~/Dropbox/ltex/dictionaries"
 }
 ```
+
+## Благодарности
+
+*   Основано на [LSP-ltex-ls](https://github.com/sublimelsp/LSP-ltex-ls).
+*   Работает на базе [ltex-plus](https://github.com/ltex-plus/ltex-ls-plus).

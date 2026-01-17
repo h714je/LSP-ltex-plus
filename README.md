@@ -1,8 +1,11 @@
-moved to https://github.com/sublimelsp/LSP-ltex-plus
+
 
 # LSP-ltex-plus
 
 Latex/Markdown grammar check support for Sublime's LSP plugin provided through [ltex-plus/ltex-ls-plus](https://github.com/ltex-plus/ltex-ls-plus).
+
+This plugin is a fork of [LSP-ltex-ls](https://github.com/sublimelsp/LSP-ltex-ls) adapted for LTeX Plus.
+
 
 ## Installation
 
@@ -44,7 +47,7 @@ Here are some ways to configure the package and the language server.
 
 This plugin supports storing dictionaries, hidden false positives, and disabled rules in external files. This is useful for sharing configurations or keeping your settings file clean.
 
-To enable this feature, add the following to your `LSP-ltex-ls-dev.sublime-settings`:
+To enable this feature, add the following to your `LSP-ltex-plus.sublime-settings`:
 
 ```json
 {
@@ -57,9 +60,9 @@ To enable this feature, add the following to your `LSP-ltex-ls-dev.sublime-setti
 When enabled, code actions (Add to Dictionary, Hide False Positive, Disable Rule) will write to files in your User package directory instead of updating the settings file directly.
 
 **Default Locations:**
-*   Dictionaries: `.../Packages/User/LSP-ltex-ls-dev/dictionaries/{lang}.txt`
-*   Hidden False Positives: `.../Packages/User/LSP-ltex-ls-dev/hidden_false_positives/hiddenFalsePositives.{lang}.txt`
-*   Disabled Rules: `.../Packages/User/LSP-ltex-ls-dev/disabled_rules/disabledRules.{lang}.txt`
+*   Dictionaries: `.../Packages/User/LSP-ltex-plus/dictionaries/{lang}.txt`
+*   Hidden False Positives: `.../Packages/User/LSP-ltex-plus/hidden_false_positives/hiddenFalsePositives.{lang}.txt`
+*   Disabled Rules: `.../Packages/User/LSP-ltex-plus/disabled_rules/disabledRules.{lang}.txt`
 
 **Custom Locations:**
 You can customize the directories by setting:
@@ -75,3 +78,8 @@ Example:
 }
 ```
 
+
+## Credits
+
+*   Based on [LSP-ltex-ls](https://github.com/sublimelsp/LSP-ltex-ls).
+*   Powered by [ltex-plus](https://github.com/ltex-plus/ltex-ls-plus).
