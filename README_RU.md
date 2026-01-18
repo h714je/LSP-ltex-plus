@@ -19,6 +19,31 @@
 
 Примечание: В настоящее время LSP игнорирует файлы, не входящие в рабочую область. Добавьте папку в Sublime Text, чтобы включить сервер.
 
+## Известные проблемы
+
+- **Завершение процесса в Windows**: На Windows скрипт `ltex-ls-plus.bat` иногда может оставлять процесс Java запущенным после закрытия Sublime Text. Если вы столкнулись с этим, вы можете настроить запуск Java напрямую в настройках `command`:
+
+  ```json
+  "command": [
+      "C:\\path\\to\\java.exe", 
+
+      "-Xrs",
+      "-Xms64m",
+      "-Xmx2G",
+      "-Xlog:disable", // ВАЖНО: Запрещаем Java писать логи в stdout
+
+      "-Dapp.name=ltex-ls-plus",
+      "-Dapp.home=${serverdir}",
+      "-Dbasedir=${serverdir}",
+
+      "-cp",
+      "${serverdir}/lib/*",
+
+      "org.bsplines.ltexls.LtexLanguageServerLauncher"
+  ],
+  ```
+
+
 ## Настройка
 
 Вот несколько способов настройки пакета и языкового сервера.

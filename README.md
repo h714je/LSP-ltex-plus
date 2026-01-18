@@ -19,6 +19,31 @@ This plugin is a fork of [LSP-ltex-ls](https://github.com/sublimelsp/LSP-ltex-ls
 
 Note: Currently LSP ignores non-workspace files. Add the folder to Sublime Text to enable the Server.
 
+## Known Issues
+
+- **Windows Process Termination**: On Windows, the `ltex-ls-plus.bat` script may sometimes fail to terminate the Java process when Sublime Text closes. If you experience this, or if you want more control over the JVM, you can configure the `command` directly in your settings to bypass the batch script:
+
+  ```json
+  "command": [
+      "path/to/java.exe", // e.g. C:\\Program Files\\Java\\jdk-21\\bin\\java.exe
+
+      "-Xrs",
+      "-Xms64m",
+      "-Xmx2G",
+      "-Xlog:disable", // Important: Disable stdout logging to prevent breaking LSP
+
+      "-Dapp.name=ltex-ls-plus",
+      "-Dapp.home=${serverdir}",
+      "-Dbasedir=${serverdir}",
+
+      "-cp",
+      "${serverdir}/lib/*",
+
+      "org.bsplines.ltexls.LtexLanguageServerLauncher"
+  ],
+  ```
+
+
 ## Configuration
 
 Here are some ways to configure the package and the language server.
