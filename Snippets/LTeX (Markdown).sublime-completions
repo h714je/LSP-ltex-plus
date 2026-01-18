@@ -1,0 +1,31 @@
+{
+    "scope": "text.html.markdown, text.html.markdown.gfm",
+    "completions": [
+        {
+            "trigger": "ltex:lang",
+            "contents": "<!-- LTeX: language=${1:en-US} -->"
+        },
+        {
+            "trigger": "ltex:off",
+            "contents": "<!-- LTeX: enabled=false -->"
+        },
+        {
+            "trigger": "ltex:on",
+            "contents": "<!-- LTeX: enabled=true -->"
+        },
+        {
+            "trigger": "ltex:disable-rule",
+            "contents": "<!-- LTeX: disableRuleIds=${1:RULE_ID} -->",
+            "kind": "function"
+        },
+        {
+            "trigger": "ltex:hide-false-positives",
+            "contents": "<!-- LTeX: hideFalsePositives=${1:STRING} -->",
+            "kind": "function"
+        },
+        {
+            "trigger": "ltex:dict",
+            "contents": "<!-- LTeX: dictionary=${1:path/to/dict.txt} -->"
+        }
+    ]
+}
