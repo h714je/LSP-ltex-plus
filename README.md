@@ -68,7 +68,7 @@ Here are some ways to configure the package and the language server.
 
 ### Language Configuration
 - Set the language string in the server settings
-- Use magic comments in code, see https://ltex-plus.github.io/ltex-plus/advanced-usage.html#magic-comments
+- Use **Magic Comments Helper**: snippets for in-code configuration (e.g., type `ltex:lang` to insert a language comment). See [official documentation](https://ltex-plus.github.io/ltex-plus/advanced-usage.html#magic-comments) for details.
 
 ### External Files
 

@@ -68,7 +68,7 @@
 
 ### Настройка языка
 - Установите строку языка в настройках сервера
-- Используйте "магические комментарии" в коде, см. https://ltex-plus.github.io/ltex-plus/advanced-usage.html#magic-comments
+- Используйте **Magic Comments Helper**: сниппеты для настройки прямо в коде (например, введите `ltex:lang` для вставки комментария с языком). Подробности см. в [официальной документации](https://ltex-plus.github.io/ltex-plus/advanced-usage.html#magic-comments).
 
 ### Внешние файлы
 
