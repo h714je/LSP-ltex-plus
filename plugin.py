@@ -1,19 +1,39 @@
 import sublime
+import platform
+import os
 from LSP.plugin import (
     AbstractPlugin,
     Notification,
     register_plugin,
     unregister_plugin,
 )
-from LSP.plugin.core.typing import Any, Callable, List, Mapping, Optional
+from LSP.plugin.core.typing import Any, Callable, List, Mapping, Optional, Dict
 
 from .settings import SettingsManager
+from .server import LTeXPlusServer
 
 
 class LTeXPlus(AbstractPlugin):
     @classmethod
     def name(cls) -> str:
         return "ltex-plus"
+
+    @classmethod
+    def needs_update_or_installation(cls) -> bool:
+        return LTeXPlusServer.needs_update_or_installation()
+
+    @classmethod
+    def install_or_update(cls) -> None:
+        LTeXPlusServer.install_or_update()
+
+    @classmethod
+    def additional_variables(cls) -> Optional[Dict[str, str]]:
+        # bin/ltex-ls-plus is the script for linux/mac, bin/ltex-ls-plus.bat for windows
+        script = "ltex-ls-plus.bat" if platform.system() == "Windows" else "ltex-ls-plus"
+        return {
+            "serverdir": LTeXPlusServer.serverdir(),
+            "script": script,
+        }
 
     def on_workspace_configuration(self, params: Any, configuration: Any) -> Any:
         return SettingsManager.expand_settings(configuration)

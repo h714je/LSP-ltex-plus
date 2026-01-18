@@ -1,14 +1,33 @@
 {
     // We start this language server when we open LaTex, BibTex and Markdown files.
     "selector": "text.tex, text.bibtex, text.html.markdown, text.restructuredtext, text.asciidoc, source.typst, text.org, source.mdx",
+
     // The startup command.
-    // Download ltex-ls from https://github.com/ltex-plus/ltex-ls-plus/releases
-    // and set the path to the executable (bin/ltex-ls or bin/ltex-ls.bat) here.
-    "command": ["path/to/ltex-ls/bin/ltex-ls"],
+    // Uses the automatically downloaded server from "Package Storage/LSP-ltex-plus".
+    // "serverdir" and "script" are variables resolved by the plugin.
+    "command": [
+        "${serverdir}/bin/${script}"
+    ],
+
+    // The version of the server to use.
+    // Leave empty ("") to use the default version (currently 18.6.1).
+    // Set to a specific GitHub release tag to download/use that version.
+    "version": "",
+
     // Extra variables to override/add to language server's environment.
+    // Since we download the version without bundled Java, you may need to set JAVA_HOME here
+    // if it is not in your system PATH.
     "env": {
         "JAVA_OPTS": "-Xms64m -Xmx2G",
+        // "JAVA_HOME": "C:/Program Files/Java/jdk-21"
     },
+
+    // Controls whether to use external files for dictionary, hidden false positives, and disabled rules.
+    // If true, these lists will be stored in "User/LSP-ltex-plus/" instead of the settings file.
+    "use_external_dictionary_files": false,
+    "use_external_hidden_false_positives_files": false,
+    "use_external_disabled_rules_files": false,
+
     // The server-specific settings.
     // @see https://ltex-plus.github.io/ltex-plus/settings.html
     "settings": {
@@ -27,78 +46,103 @@
             "restructuredtext",
             "rsweave",
             "tex",
-            "typst",
+            "typst"
         ],
-        // Enable completion
+
+        // Enable completion.
         // @see https://ltex-plus.github.io/ltex-plus/settings.html#ltexcompletionenabled
         "ltex.completionEnabled": false,
+
         // Default language.
         // @see https://ltex-plus.github.io/ltex-plus/advanced-usage.html#magic-comments
         // @see https://ltex-plus.github.io/ltex-plus/settings.html#ltexlanguage
-        // new: "auto" but not recommended
         "ltex.language": "en-US",
+
         // Lists of additional words that should not be counted as spelling errors.
         // @see https://ltex-plus.github.io/ltex-plus/settings.html#ltexdictionary
         "ltex.dictionary": {},
+
         // Lists of rules that should be disabled (if enabled by default by LanguageTool).
         "ltex.disabledRules": {},
+
         // Lists of rules that should be enabled (if disabled by default by LanguageTool).
         "ltex.enabledRules": {},
+
         // Enable LanguageTool rules that are marked as picky and that are disabled by default.
         "ltex.additionalRules.enablePickyRules": false,
+
         // Lists of false-positive diagnostics to hide
         // (by hiding all diagnostics of a specific rule will in a specific sentence).
         "ltex.hiddenFalsePositives": {},
+
         // List of BibTEX fields whose values are to be checked in BibTEX files.
         "ltex.bibtex.fields": {},
-        // List of LATEX commands to be handled by the LATEX parser, listed together with empty arguments
+
+        // List of LATEX commands to be handled by the LATEX parser, listed together with empty arguments.
         "ltex.latex.commands": [],
+
         // List of names of LATEX environments to be handled by the LATEX parser.
         "ltex.latex.environments": [],
+
         // List of Markdown node types to be handled by the Markdown parser.
         "ltex.markdown.nodes": [],
         "ltex.markdown.ignore": [],
         "ltex.markdown.dummy": [],
-        // @see https://ltex-plus.github.io/ltex-plus/settings.html#ltexconfigurationtarget
-        // vscode-only. Sublime will ignore the settings (for now)
+
+        // Configuration target for code actions.
+        // Currently ignored by this plugin (always uses "user" settings).
         "ltex.configurationTarget": {
             "dictionary": "user",
             "disabledRules": "user",
-            "hiddenFalsePositives": "user",
+            "hiddenFalsePositives": "user"
         },
+
         // Optional mother tongue of the user (e.g., "de-DE").
         "ltex.additionalRules.motherTongue": "",
+
         // Optional path to a directory with rules of a language model with n-gram occurrence counts.
         "ltex.additionalRules.languageModel": "",
+
         // If set to a non-empty string, LTEX will not use the bundled,
-        // built-in version of LanguageTool. Instead, LTEX will connect to an external one
+        // built-in version of LanguageTool. Instead, LTEX will connect to an external one.
         "ltex.languageToolHttpServerUri": "",
-        // username on languagetool.org for Premium API access
+
+        // Username on languagetool.org for Premium API access.
         "ltex.languageToolOrg.username": "",
-        // set API key on languagetool.org for Premium API access
+
+        // API key on languagetool.org for Premium API access.
         "ltex.languageToolOrg.apiKey": "",
-        // Logging level (verbosity) of the ltex-ls server log
+
+        // Logging level (verbosity) of the ltex-ls server log.
         "ltex.ltex-ls.logLevel": "fine",
+
         // Debug setting to log the communication between language client and server.
         "ltex.trace.server": "off",
+
         // Size of the LanguageTool ResultCache in sentences (must be a positive integer).
         "ltex.sentenceCacheSize": 2000,
+
         // Severity of the diagnostics corresponding to the grammar and spelling errors.
         "ltex.diagnosticSeverity": "information",
 
         // Controls when documents should be checked.
-        // One of "edit", "save", and "manual" (vscode-only).
+        // One of "edit", "save".
         "ltex.checkFrequency": "edit",
-        // If set to true, diagnostics of a file are cleared when the file is closed
+
+        // If set to true, diagnostics of a file are cleared when the file is closed.
         "ltex.clearDiagnosticsWhenClosingFile": true,
-        // If set to true, an item about the status of LTEX+ is shown permanently in the status bar.
-        // vscode-only.
+
+        // If set to true, an item about the status of LTEX+ is shown in the status bar (VS Code only).
         "ltex.statusBarItem": false,
-        // Java path to use. Should point to the JAVA_HOME/bin directory. Currently disabled.
+
+        // Java path to use. Should point to the JAVA_HOME/bin directory.
+        // Note: It is recommended to use the "env" variable "JAVA_HOME" instead.
         "ltex.java.path": "",
-        // Initial size of the Java heap memory in megabytes (-Xms)
+
+        // Initial size of the Java heap memory in megabytes (-Xms).
         "ltex.java.initialHeapSize": 64,
-        // Maximum size of the Java heap memory in megabytes (-Xmx)
-        "ltex.java.maximumHeapSize": 2048,
-    },
+
+        // Maximum size of the Java heap memory in megabytes (-Xmx).
+        "ltex.java.maximumHeapSize": 2048
+    }
 }
