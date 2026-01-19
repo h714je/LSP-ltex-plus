@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.1] - 2026-01-20
+
+- **Comprehensive Documentation**: Added Magic Comments guide, Settings Reference, External Files guide, and Troubleshooting section
+- **Bilingual Support**: All documentation available in English and Russian
+- **User-Friendly**: Easy-to-follow examples and solutions
+
 ## [1.2.0] - 2026-01-20
 
 - **Platform Detection**: Auto-detect OS and architecture, download bundled Java versions

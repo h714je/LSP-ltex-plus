@@ -75,37 +75,113 @@ Forces a restart of the LTeX language server. Use this when:
 - Refreshing after manual dictionary file edits
 
 
-## Configuration
+## Magic Comments
 
-Here are some ways to configure the package and the language server.
+You can control LTeX settings directly in your document using magic comments. This is useful for per-document configuration without changing global settings.
 
-- From `Preferences > Package Settings > LSP > Servers > LSP-ltex-plus`
-- Project-specific configuration.
-  From the command palette run `Project: Edit Project` and add your settings in:
+### Basic Usage
 
-  ```js
-  {
-     "settings": {
-        "LSP": {
-           "ltex-plus": {
-              "settings": {
-                 // Put your settings here
-              }
-           }
-        }
-     }
+```latex
+% LTeX: language=de-DE
+% LTeX: enabled=false
+
+Your text here...
+
+% LTeX: enabled=true
+```
+
+### Common Examples
+
+**Change language for a section:**
+```latex
+% LTeX: language=ru-RU
+\section{Введение}
+Текст на русском языке.
+
+% LTeX: language=en-US
+\section{Introduction}
+Text in English.
+```
+
+**Disable specific rules:**
+```latex
+% LTeX: disabledRules=en-US:UPPERCASE_SENTENCE_START,EN_QUOTES
+```
+
+**Add words to dictionary:**
+```latex
+% LTeX: dictionary=en-US:LTeX,Markdown,reStructuredText
+```
+
+**Disable checking for code blocks:**
+```latex
+% LTeX: enabled=false
+\begin{lstlisting}
+  code here
+\end{lstlisting}
+% LTeX: enabled=true
+```
+
+📖 **Full documentation:** [Magic Comments Guide](https://ltex-plus.github.io/ltex-plus/advanced-usage.html#magic-comments)
+
+
+## Settings Reference
+
+All LTeX settings are available in `Preferences > Package Settings > LSP > Servers > LSP-ltex-plus > Settings`.
+
+### Key Settings
+
+| Setting | Description | Default |
+|---------|-------------|---------|
+| `ltex.language` | Default language for grammar checking | `"en-US"` |
+| `ltex.dictionary` | Custom words to ignore | `{}` |
+| `ltex.disabledRules` | Rules to disable | `{}` |
+| `ltex.enabledRules` | Rules to enable (if disabled by default) | `{}` |
+| `ltex.additionalRules.enablePickyRules` | Enable strict rules (passive voice, etc.) | `false` |
+| `ltex.checkFrequency` | When to check: `"edit"` or `"save"` | `"edit"` |
+| `ltex.completionEnabled` | Enable word completion | `false` |
+
+### Example Configuration
+
+```json
+{
+  "settings": {
+    "ltex.language": "en-US",
+    "ltex.dictionary": {
+      "en-US": ["LaTeX", "Markdown", "reStructuredText"]
+    },
+    "ltex.additionalRules.enablePickyRules": true,
+    "ltex.checkFrequency": "save"
   }
-  ```
+}
+```
 
-### Language Configuration
-- Set the language string in the server settings
-- Use **Magic Comments Helper**: snippets for in-code configuration (e.g., type `ltex:lang` to insert a language comment). See [official documentation](https://ltex-plus.github.io/ltex-plus/advanced-usage.html#magic-comments) for details.
+### Project-Specific Settings
 
-### External Files
+From the command palette run `Project: Edit Project` and add:
 
-This plugin supports storing dictionaries, hidden false positives, and disabled rules in external files. This is useful for sharing configurations or keeping your settings file clean.
+```js
+{
+   "settings": {
+      "LSP": {
+         "ltex-plus": {
+            "settings": {
+               // Put your settings here
+            }
+         }
+      }
+   }
+}
+```
 
-To enable this feature, add the following to your `LSP-ltex-plus.sublime-settings`:
+📖 **Full settings list:** [LTeX Settings Documentation](https://ltex-plus.github.io/ltex-plus/settings.html)
+
+
+## External Dictionary Files
+
+Instead of storing dictionaries in settings (which requires server restart when modified), you can use external files.
+
+### How to Enable
 
 ```json
 {
@@ -115,26 +191,79 @@ To enable this feature, add the following to your `LSP-ltex-plus.sublime-setting
 }
 ```
 
-When enabled, code actions (Add to Dictionary, Hide False Positive, Disable Rule) will write to files in your User package directory instead of updating the settings file directly.
+### Benefits
 
-**Default Locations:**
-*   Dictionaries: `.../Packages/User/LSP-ltex-plus/dictionaries/{lang}.txt`
-*   Hidden False Positives: `.../Packages/User/LSP-ltex-plus/hidden_false_positives/hiddenFalsePositives.{lang}.txt`
-*   Disabled Rules: `.../Packages/User/LSP-ltex-plus/disabled_rules/disabledRules.{lang}.txt`
+✅ **No server restart needed** - add words without restarting  
+✅ **Cleaner settings** - keeps `.sublime-settings` file small  
+✅ **Easy to share** - commit external files to Git for team use
 
-**Custom Locations:**
-You can customize the directories by setting:
-*   `external_dictionary_dir`
-*   `external_hidden_false_positives_dir`
-*   `external_disabled_rules_dir`
+### File Locations
 
-Example:
+**Default locations:**
+- Dictionaries: `.../Packages/User/LSP-ltex-plus/dictionaries/{lang}.txt`
+- Hidden False Positives: `.../Packages/User/LSP-ltex-plus/hidden_false_positives/hiddenFalsePositives.{lang}.txt`
+- Disabled Rules: `.../Packages/User/LSP-ltex-plus/disabled_rules/disabledRules.{lang}.txt`
+
+**Custom locations:**
 ```json
 {
   "use_external_dictionary_files": true,
   "external_dictionary_dir": "~/Dropbox/ltex/dictionaries"
 }
 ```
+
+**Format:** One entry per line (plain text)
+
+
+## Troubleshooting
+
+### Server Won't Start
+
+**Symptom:** No grammar checking, no errors shown.
+
+**Solutions:**
+1. **With bundled Java (v1.2.0+):** Should work automatically on supported platforms
+   - Windows x64, macOS x64/ARM64, Linux x64/ARM64
+2. **Without bundled Java:** Install Java 21+ and ensure it's in PATH or set `JAVA_HOME`
+3. Check console (`View > Show Console`) for error messages
+
+### No Errors/Warnings Shown
+
+**Symptom:** File is open but no grammar checks appear.
+
+**Solutions:**
+1. **Add folder to workspace:** LSP requires files to be in a workspace
+   - `Project > Add Folder to Project...`
+2. **Check file type:** Ensure language is supported (LaTeX, Markdown, etc.)
+3. **Run `LTeX: Show Status`** to check configuration
+
+### Download Fails
+
+**Symptom:** Server download times out or fails.
+
+**Solutions:**
+1. Check internet connection and proxy settings
+2. Manual download from [GitHub Releases](https://github.com/ltex-plus/ltex-ls-plus/releases)
+   - Extract to `~/.../Package Storage/LSP-ltex-plus/ltex-ls-plus-{version}/`
+
+### Performance Issues
+
+**Symptom:** Sublime Text slows down during checking.
+
+**Solutions:**
+1. Increase Java heap size:
+   ```json
+   "env": {
+     "JAVA_OPTS": "-Xms128m -Xmx4G"
+   }
+   ```
+2. Change check frequency to `"save"` instead of `"edit"`
+3. Disable picky rules: `"ltex.additionalRules.enablePickyRules": false`
+
+### Find Server Logs
+
+- **Windows:** `%TEMP%` → search for `ltex-ls` files
+- **macOS/Linux:** `/tmp/` → search for `ltex-ls` files
 
 
 ## Credits
