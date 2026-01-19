@@ -68,13 +68,29 @@ class LTeXPlusServer:
             # FORCE platform-independent .tar.gz (no bundled Java)
             suffix = ".tar.gz"
 
-            sublime.status_message("LSP-ltex-plus: downloading server...")
-            
             download_url = GITHUB_DL_URL.format(version, suffix)
             print(f"LSP-ltex-plus: downloading from {download_url}")
             
+            # Progress tracking
+            def download_progress(block_num, block_size, total_size):
+                """Display download progress with percentage and size."""
+                downloaded = block_num * block_size
+                if total_size > 0:
+                    percent = min(100, int(downloaded * 100 / total_size))
+                    downloaded_mb = downloaded / (1024 * 1024)
+                    total_mb = total_size / (1024 * 1024)
+                    sublime.status_message(
+                        f"LSP-ltex-plus: downloading server... {percent}% ({downloaded_mb:.1f}/{total_mb:.1f} MB)"
+                    )
+                else:
+                    downloaded_mb = downloaded / (1024 * 1024)
+                    sublime.status_message(
+                        f"LSP-ltex-plus: downloading server... ({downloaded_mb:.1f} MB)"
+                    )
+            
             try:
-                urllib.request.urlretrieve(download_url, archive_path)
+                urllib.request.urlretrieve(download_url, archive_path, reporthook=download_progress)
+                sublime.status_message("LSP-ltex-plus: download complete!")
             except urllib.error.URLError as e:
                 sublime.error_message(f"LSP-ltex-plus: Error downloading server: {e}")
                 return

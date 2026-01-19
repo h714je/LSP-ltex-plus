@@ -248,8 +248,9 @@ class SettingsManager:
                 # Update mtime in cache to avoid re-reading our own write
                 if path.exists():
                      cls._cache[str(path)]["mtime"] = path.stat().st_mtime
-            except Exception:
-                pass # logging?
+            except Exception as e:
+                print(f"LSP-ltex-plus: Error writing to {path}: {e}")
+                return []
 
             return added
 
@@ -270,8 +271,8 @@ class SettingsManager:
                     w = line.strip()
                     if w and not w.startswith("#"):
                         words.add(w)
-            except Exception:
-                pass
+            except Exception as e:
+                print(f"LSP-ltex-plus: Error reading from {path}: {e}")
 
         cls._cache[path_str] = {"mtime": current_mtime, "words": words}
         return words

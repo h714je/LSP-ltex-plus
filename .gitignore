@@ -40,6 +40,13 @@ Thumbs.db
 ###########################
 node_modules/*
 
+# Python #
+###########
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
 # Language Server #
 ###########################
 ltex-ls-*
