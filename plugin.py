@@ -1,4 +1,5 @@
 import sublime
+import sublime_plugin
 import platform
 import os
 from LSP.plugin import (
@@ -141,6 +142,85 @@ class LTeXPlus(AbstractPlugin):
             
             # Give the server a moment to process the config change
             sublime.set_timeout_async(delayed_check, 100)
+
+
+# ============================================================================
+# User Commands
+# ============================================================================
+
+class LtexClearDiagnosticsCommand(sublime_plugin.TextCommand):
+    """Clear all LTeX diagnostics from the current view."""
+    
+    def run(self, edit: sublime.Edit) -> None:
+        window = self.view.window()
+        if not window:
+            return
+        
+        # Clear diagnostics for this file
+        file_name = self.view.file_name()
+        if file_name:
+            # Trigger a manual clear via LSP
+            window.run_command("lsp_clear_panel_diagnostics")
+            sublime.status_message("LTeX: Diagnostics cleared")
+        else:
+            sublime.status_message("LTeX: No file to clear diagnostics from")
+    
+    def is_enabled(self) -> bool:
+        """Enable only if there's an active file."""
+        return self.view.file_name() is not None
+
+
+class LtexShowStatusCommand(sublime_plugin.WindowCommand):
+    """Show LTeX server status and plugin information."""
+    
+    def run(self) -> None:
+        from .server import LTeXPlusServer
+        
+        # Collect status information
+        lines = []
+        lines.append("=== LSP-ltex-plus Status ===\n")
+        
+        # Server version
+        server_version = LTeXPlusServer.serverversion()
+        lines.append(f"Server Version: {server_version}")
+        
+        # Server directory
+        server_dir = LTeXPlusServer.serverdir()
+        server_installed = "✓ Installed" if LTeXPlusServer.needs_update_or_installation() == False else "✗ Not installed"
+        lines.append(f"Server Status: {server_installed}")
+        lines.append(f"Server Path: {server_dir}\n")
+        
+        # Settings
+        settings = sublime.load_settings("LSP-ltex-plus.sublime-settings")
+        language = settings.get("settings", {}).get("ltex.language", "not set")
+        lines.append(f"Active Language: {language}")
+        
+        # External files configuration
+        use_ext_dict = settings.get("use_external_dictionary_files", False)
+        use_ext_fps = settings.get("use_external_hidden_false_positives_files", False)
+        use_ext_rules = settings.get("use_external_disabled_rules_files", False)
+        lines.append(f"External Dictionary Files: {'✓ Enabled' if use_ext_dict else '✗ Disabled'}")
+        lines.append(f"External False Positives: {'✓ Enabled' if use_ext_fps else '✗ Disabled'}")
+        lines.append(f"External Disabled Rules: {'✓ Enabled' if use_ext_rules else '✗ Disabled'}")
+        
+        # Show in dialog
+        sublime.message_dialog("\n".join(lines))
+
+
+class LtexRestartServerCommand(sublime_plugin.WindowCommand):
+    """Restart the LTeX language server."""
+    
+    def run(self) -> None:
+        sublime.status_message("LTeX: Restarting server...")
+        
+        # Use LSP's built-in restart command
+        self.window.run_command("lsp_restart_server", {"config_name": "ltex-plus"})
+        
+        # Give feedback after a delay
+        def show_completion():
+            sublime.status_message("LTeX: Server restart initiated")
+        
+        sublime.set_timeout_async(show_completion, 500)
 
 
 def plugin_loaded() -> None:

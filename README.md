@@ -44,6 +44,29 @@ Note: Currently LSP ignores non-workspace files. Add the folder to Sublime Text 
   ```
 
 
+## Available Commands
+
+Access these commands via Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`):
+
+### LTeX: Clear Diagnostics
+Clears all grammar and spelling errors from the current view. Useful when you want to temporarily hide diagnostics while focusing on content.
+
+### LTeX: Show Status
+Displays a dialog with plugin information:
+- Server version and installation status
+- Server installation path
+- Active language setting
+- External files configuration status
+
+Helpful for troubleshooting and verifying your configuration.
+
+### LTeX: Restart Server
+Forces a restart of the LTeX language server. Use this when:
+- Applying settings changes that require a restart
+- Recovering from server errors
+- Refreshing after manual dictionary file edits
+
+
 ## Configuration
 
 Here are some ways to configure the package and the language server.

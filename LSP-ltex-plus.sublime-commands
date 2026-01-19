@@ -7,4 +7,16 @@
             "default": "// Settings in here override those in \"LSP-ltex-plus/LSP-ltex-plus.sublime-settings\"\n\n{\n\t$0\n}\n",
         },
     },
+    {
+        "caption": "LTeX: Clear Diagnostics",
+        "command": "ltex_clear_diagnostics"
+    },
+    {
+        "caption": "LTeX: Show Status",
+        "command": "ltex_show_status"
+    },
+    {
+        "caption": "LTeX: Restart Server",
+        "command": "ltex_restart_server"
+    }
 ]
