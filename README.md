@@ -13,9 +13,17 @@ This plugin is a fork of [LSP-ltex-ls](https://github.com/sublimelsp/LSP-ltex-ls
 2. Install this plugin.
 3. Restart Sublime. The server will be downloaded automatically (requires internet connection).
 
-**Requirements:**
-- Java Runtime Environment (JRE) 21 or higher must be installed and available in your system PATH or configured via `JAVA_HOME`.
-  - This plugin downloads the platform-independent version of `ltex-ls-plus` which does **not** include a bundled Java runtime.
+**New in v1.2.0:**
+- The plugin now auto-detects your platform (Windows/macOS/Linux) and architecture (x64/ARM64)
+- Downloads the appropriate version **with bundled Java** - no separate Java installation needed!
+- For unsupported platforms, falls back to platform-independent version ( requires Java 21+)
+
+**Supported platforms with bundled Java:**
+- ✅ Windows x64
+- ✅ macOS x64 (Intel)
+- ✅ macOS ARM64 (Apple Silicon)
+- ✅ Linux x64
+- ✅ Linux ARM64
 
 Note: Currently LSP ignores non-workspace files. Add the folder to Sublime Text to enable the Server.
 
