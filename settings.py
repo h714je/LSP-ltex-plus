@@ -7,10 +7,24 @@ import sublime
 from typing import NamedTuple
 from LSP.plugin.core.typing import Any, Dict, List, Set, Optional
 
-SETTINGS_FILENAME = "LSP-ltex-plus.sublime-settings"
+SETTINGS_FILENAME: str = "LSP-ltex-plus.sublime-settings"
 
 
 class SettingScope(NamedTuple):
+    """
+    Configuration scope for external file management.
+    
+    Defines how a particular setting type (dictionary, hidden false positives,
+    disabled rules) should be handled when external files are enabled.
+    
+    Attributes:
+        server_key: Server setting key (e.g., "ltex.dictionary")
+        expand_keys: User setting keys that map to this scope
+        enable_key: Setting key to enable external files
+        dir_key: Setting key for custom directory path
+        default_subdir: Default subdirectory name
+        file_template: Filename template with {lang} placeholder
+    """
     # The key expected/sent by the server (e.g., "ltex.dictionary")
     server_key: str
     # Keys in the user's settings that map to this scope (e.g., ["dictionary", "ltex.dictionary"])
@@ -25,7 +39,7 @@ class SettingScope(NamedTuple):
     file_template: str
 
 
-_SCOPES = [
+_SCOPES: List[SettingScope] = [
     SettingScope(
         server_key="ltex.dictionary",
         expand_keys=["ltex.dictionary", "dictionary"],
@@ -55,29 +69,62 @@ _SCOPES = [
 
 class SettingsManager:
     """
-    Manages reading and writing of LSP-ltex-plus settings, 
-    including handling of external dictionary files.
+    Manages LSP-ltex-plus settings and external file integration.
+    
+    This class handles:
+    - Expanding external file paths (:file.txt) to their content
+    - Writing code action results to external files or settings
+    - Caching external file content for performance
+    - Thread-safe file access
+    
+    External Files:
+        When external files are enabled, dictionary/rules can be stored
+        in text files instead of settings. This allows:
+        - No server restart needed when adding words
+        - Easy sharing via Git
+        - Cleaner settings files
+        
+    Cache:
+        File content is cached with mtime tracking to avoid redundant reads.
+        The cache is thread-safe using a Lock.
     """
-    _lock = Lock()
+    _lock: Lock = Lock()
     # Cache: path_str -> {"mtime": float, "words": Set[str]}
     _cache: Dict[str, Dict[str, Any]] = {}
-    _lang_sanitize_re = re.compile(r"[^A-Za-z0-9._-]+")
+    _lang_sanitize_re: re.Pattern = re.compile(r"[^A-Za-z0-9._-]+")
 
     @classmethod
     def expand_settings(cls, server_settings: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Expands settings before sending to the server.
-        Specifically, replaces dictionary file paths (starting with :) with the actual list of words.
+        Expand external file references in settings before sending to server.
+        
+        This method processes settings and replaces external file markers
+        (e.g., [":/path/to/dict.txt"]) with the actual file content.
+        
+        External file markers:
+            - Single-item list starting with ':' indicates external file
+            - Path after ':' is resolved and file content is loaded
+            - Content is cached for performance
+            
+        Args:
+            server_settings: Raw settings dictionary from user configuration
+            
+        Returns:
+            Expanded settings with external file content loaded
+            
+        Example:
+            Input:  {"ltex.dictionary": {"en-US": [":/path/dict.txt"]}}
+            Output: {"ltex.dictionary": {"en-US": ["word1", "word2", ...]}}
         """
         # We don't necessarily need to load sublime settings here unless checking enables,
         # but the original logic didn't check enables for expansion, only for writing.
         # We just expand if we find the key.
         
-        expanded = copy.deepcopy(server_settings)
+        expanded: Dict[str, Any] = copy.deepcopy(server_settings)
         
         for scope in _SCOPES:
             # Find which key is present in the settings (prioritize server_key, then aliases)
-            target_key = None
+            target_key: Optional[str] = None
             if scope.server_key in expanded:
                 target_key = scope.server_key
             else:
@@ -89,15 +136,15 @@ class SettingsManager:
             if not target_key:
                 continue
 
-            dict_cfg = cls._as_dict(expanded[target_key])
+            dict_cfg: Dict[str, Any] = cls._as_dict(expanded[target_key])
             
             for lang, items_any in dict_cfg.items():
-                items = cls._as_list(items_any)
+                items: List[str] = cls._as_list(items_any)
                 # Check if it's a marker like [":/path/to/file.txt"]
                 if len(items) == 1 and isinstance(items[0], str) and items[0].startswith(":"):
-                    file_path_str = items[0][1:]
-                    path = Path(file_path_str)
-                    words_set = cls._ensure_cache_loaded(path)
+                    file_path_str: str = items[0][1:]
+                    path: Path = Path(file_path_str)
+                    words_set: Set[str] = cls._ensure_cache_loaded(path)
                     dict_cfg[lang] = sorted(words_set)
             
             expanded[target_key] = dict_cfg
